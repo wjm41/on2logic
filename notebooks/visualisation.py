@@ -91,16 +91,16 @@ def gen_faux_metadata(manuscript_labels):
     trial_meta_data = [rng.choice(tags,rng.integers(0,len(tags)),p=probs[label_]/probs[label_].sum()) for label_ in manuscript_labels]
     return trial_meta_data
 
-def display_visualisation(x,y,manuscript_database,cluster_model,prototype_fts=False):
+def display_visualisation(x,y,images,manuscript_database,cluster_model,prototype_fts=False):
     """
     This plot displays the visualisation using matplotlib widgets. 
     Absolutely must include '%matplotlib widget' somewhere at top of notebook. 
-    Note that images in the dataframe (mansucript_database) are tensors (torch.tensor (N,3,size,size)). 
 
     Parameters
     ----------
     x                   (ndarray (N,))                  : First embedding vector for data.
     y                   (ndarray (N,))                  : Second embedding vector for data.
+    images              (torch.tensor, (N,3,size,size)) : Tensor representing all the images. 
     manuscript_database (pd.dataframe)                  : Dataframe containing info on the manuscript (image tensors, embeddings, labels, pages)
     prototype_fts       (bool)                          : Whether to show prototype features (e.g. searchbox)
     """
@@ -151,10 +151,10 @@ def display_visualisation(x,y,manuscript_database,cluster_model,prototype_fts=Fa
         ell.set_clip_box(lax.bbox)
         cluster_perims[i] = lax.add_artist(ell)
 
-    img = rax.imshow(manuscript_database.loc[0,"image"].permute(1, 2, 0))
+    img = rax.imshow(images[0].permute(1, 2, 0))
     # Plot an image
     def plot_img_on_rax(ind):
-        img.set_data(manuscript_database.loc[ind,"image"].permute(1, 2, 0))
+        img.set_data(images[ind].permute(1, 2, 0))
         rax.set_visible(True)
         rax.set_title("{} p.{}".format(manuscript_database.loc[ind,"manuscript"],manuscript_database.loc[ind,"page"]))
     plot_img_on_rax(np.random.randint(manuscript_database.shape[0]))
