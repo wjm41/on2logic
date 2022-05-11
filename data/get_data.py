@@ -51,7 +51,10 @@ for item in items:
                 print(f'URL: {download_image}')
 
                 save_image = image_id.replace('.jp2', '.jpg')
-                save_image = 'images_iiif/' + save_image
+                outdir = 'images_iiif'
+                if not os.path.exists(outdir):
+                    os.mkdir(outdir)
+                save_image = outdir + save_image
 
                 # # Backoff to prevent the IIIF server being overloaded
                 # time.sleep(0.1)
