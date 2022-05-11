@@ -57,7 +57,7 @@ def find_opt_gmm(X,min_clusters=5,n_max=15):
     for i,n in enumerate(range(min_clusters,n_max+1)):
         gmm = GaussianMixture(n_components=n,n_init=min_clusters)
         gmm.fit(X)
-        scores[i] = gmm.bic(X)
+        scores[i] = gmm.bic(X) # change bic to aic to generate more clusters.
         models[i] = gmm
     return models[np.argmin(scores)]
 
