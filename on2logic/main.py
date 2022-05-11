@@ -119,7 +119,7 @@ def plot_top_n_similar_images_for_query(image_dataset_to_search,
 def plot_image_row(image_dataset, indices, rows):
     sns.set_style('white')
 
-    fig, axs = plt.subplots(figsize=(20,10), ncols=len(indices))
+    fig, axs = plt.subplots(figsize=(20,20), ncols=len(indices))
     for i,index in enumerate(indices):
         plot_image_from_index(image_dataset=image_dataset,
                               image_index=index, 
@@ -163,7 +163,7 @@ def similarity_histogram(image_dataset_to_search,
 
     plot_image_from_index(image_dataset=image_dataset_to_search, image_index=query_index, 
                           title=f'Original Image, search_type = ({search_type})')    
-    
+    print('Loading...')
     fig = plt.figure(figsize=(20,10))
     # sns.set(rc={'figure.figsize':(14, 14)})
     ax = plt.gca()
