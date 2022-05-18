@@ -1,1 +1,2 @@
-from .main import *
+import main
+import data
