@@ -39,6 +39,7 @@ def download_and_save_single_image(image_id,
     try:
         # Creating a request object to store the response
         ImgRequest = requests.get(download_image)
+        print(download_image)
         # Verifying whether the specified URL exist or not
         if ImgRequest.status_code == requests.codes.ok:
             # Opening a file to write bytes from response content
@@ -64,7 +65,7 @@ def loop_through_json_data_and_save_images(item_name:str ,
         project_dir = Path(abspath(__file__)).parents[1]
 
         save_folder = f'{project_dir}/data/images/cudl/{item_name}'
-        
+        # print(save_folder)
     Path(save_folder).mkdir(parents=True, exist_ok=True)
     
     for sequence in json_data['sequences']:
@@ -76,14 +77,16 @@ def loop_through_json_data_and_save_images(item_name:str ,
                 iiif_image = image['resource']['@id']
 
                 image_id = iiif_image.rsplit('/', 1)[-1]
+                # print(image_id)
                 download_and_save_single_image(image_id, save_folder, relax)
                 
 
 def download_images_from_item_name(item_name):
+    # print(item_name)
     json_data = load_iiif_manifest_from_item_name(item_name)
-    print(json_data)
-    # loop_through_json_data_and_save_images(item_name, 
-    #                                        json_data)
+    # print(json_data)
+    loop_through_json_data_and_save_images(item_name, 
+                                           json_data)
 #%%
 if __name__ == '__main__':
     Fire(download_images_from_item_name)
