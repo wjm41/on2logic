@@ -1,4 +1,5 @@
 #%%
+from email.policy import default
 import requests
 from pathlib import Path
 from os.path import abspath, dirname
@@ -56,15 +57,20 @@ def download_and_save_single_image(image_id,
         print(str(e))
     return
 
+def default_folder_name_for_item(item_name):
+    project_dir = Path(abspath(__file__)).parents[1]
+
+    default_folder_name = f'{project_dir}/data/images/cudl/{item_name}'
+    
+    return default_folder_name
+
 def loop_through_json_data_and_save_images(item_name:str ,
                                            json_data, 
                                            save_folder:str = None,
                                            relax:bool = False):
     
     if save_folder is None:
-        project_dir = Path(abspath(__file__)).parents[1]
-
-        save_folder = f'{project_dir}/data/images/cudl/{item_name}'
+        save_folder = default_folder_name_for_item(item_name)
         # print(save_folder)
     Path(save_folder).mkdir(parents=True, exist_ok=True)
     
@@ -82,11 +88,28 @@ def loop_through_json_data_and_save_images(item_name:str ,
                 
 
 def download_images_from_item_name(item_name):
-    # print(item_name)
+
     json_data = load_iiif_manifest_from_item_name(item_name)
-    # print(json_data)
+
     loop_through_json_data_and_save_images(item_name, 
                                            json_data)
+    
+    
+def item_name_dataloader(item_name):
+    json_data = load_iiif_manifest_from_item_name(item_name)
+    
+    for sequence in json_data['sequences']:
+
+        for canvas in sequence['canvases']:
+
+            for image in canvas['images']:
+
+                iiif_image = image['resource']['@id']
+
+                image_id = iiif_image.rsplit('/', 1)[-1]
+                
+                yield image_id
+                
 #%%
 if __name__ == '__main__':
     Fire(download_images_from_item_name)
