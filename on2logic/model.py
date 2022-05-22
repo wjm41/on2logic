@@ -6,7 +6,7 @@ from scipy import spatial
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-def load_image_model(model_name:str ='restnet50') -> torch.nn.Module:
+def load_image_model(model_name:str ='resnet50') -> torch.nn.Module:
     image_model = timm.create_model(model_name, pretrained=True)
     image_model.eval() # this turns off dropout etc, important!
     return image_model
@@ -23,3 +23,8 @@ def generate_vectors_from_preprocessed_folder(image_model, image_dataset):
     image_vectors = torch.cat(image_vectors).detach().numpy()
     image_labels = torch.cat(image_labels).detach().numpy()
     return image_vectors, image_labels
+
+def generate_vector_for_pil_image(pil_image, image_mdoel, torchvision_transform):
+    transformed_image = torchvision_transform(pil_image).unsqueeze(0)
+    image_vector = image_mdoel(transformed_image).detach().numpy()
+    return image_vector

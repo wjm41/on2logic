@@ -1,5 +1,4 @@
 #%%
-from email.policy import default
 import requests
 from pathlib import Path
 from os.path import abspath, dirname
@@ -91,6 +90,8 @@ def download_images_from_item_name(item_name):
 
     json_data = load_iiif_manifest_from_item_name(item_name)
 
+
+    # TODO save json metadata as txt file - display in app
     loop_through_json_data_and_save_images(item_name, 
                                            json_data)
     

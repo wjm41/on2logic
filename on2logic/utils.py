@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 from torchvision import datasets, transforms
@@ -24,8 +26,9 @@ def generate_manuscript_dataframe(image_vectors, image_labels, label_dictionary,
     manuscript_dataframe['page'] = page_numbers
     return manuscript_dataframe
 
-def case_study_setup(parent_dirname):
-    image_dirname = parent_dirname+'/data/images'
+def case_study_setup():
+    parent_dirname = str(Path.cwd().parents[0])
+    image_dirname = parent_dirname+'/data/images/case_study/'
     numpy_dirname = parent_dirname+'/notebooks/numpy/'
     manuscript_dataset, manuscript_label_to_name, manuscript_page_numbers = load_image_folder_and_return_dataset(image_dirname)
 
