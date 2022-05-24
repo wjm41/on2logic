@@ -91,3 +91,10 @@ If you would like to access the full data set, there is a Python script availabl
 To run this script, you need to also download the file **item_list.txt**, which contains the IDs of each of the manuscripts in the data set.
 
 This will download all the associated images of these five manuscripts onto your computer.  This is a grand total of 3,627 images, taking up about 1.3 GB.  Please be aware that the download can take some time.
+
+### TO-DO
+
+TODO - download manifest .csv for case study files
+TODO - implement search via manifests
+TODO - implement app
+TODO - host example app on heroku

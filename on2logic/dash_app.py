@@ -123,24 +123,11 @@ def search_app(mode:str):
         dcc.Upload(
             id='upload-image',
             children = html.Button('Upload File')),
-        # dcc.Upload(
-        # id='upload-image',
-        # children=html.Div([
-        #     'Drag and Drop or ',
-        #     html.A('Select Files')
-        # ]),
-        # style={
-        #     'width': '100%',
-        #     'height': '60px',
-        #     'lineHeight': '60px',
-        #     'borderWidth': '1px',
-        #     'borderStyle': 'dashed',
-        #     'borderRadius': '5px',
-        #     'textAlign': 'center',
-        #     'margin': '10px'
-        # },),
         html.Div(id='output-image-upload'),
+        html.Div(id='search-results'),
+        
     ])
+    
     # @app.callback(
     #     output=[],
     #     inputs=[],
@@ -156,27 +143,49 @@ def search_app(mode:str):
             html.H5(filename),
             html.H6(datetime.datetime.fromtimestamp(date)),
 
-            # HTML images accept base64 encoded strings in the same format
-            # that is supplied by the upload
+            html.Div('Uploaded Image:'),
             html.Img(src=contents),
             html.Hr(),
-            html.Div('Raw Content'),
-            html.Pre(contents[0:200] + '...', style={
-                'whiteSpace': 'pre-wrap',
-                'wordBreak': 'break-all'
-            })
+            # html.Div('Raw Content'),
+            # html.Pre(contents[0:200] + '...', style={
+            #     'whiteSpace': 'pre-wrap',
+            #     'wordBreak': 'break-all'
+            # })
             ])
         return img_content
+    
+    def return_search_results(img_vector, top_n:int):
+        results = perform_search(img_vector, search_dataframe=library_dataframe, top_n=top_n)
+        
+        search_content = [html.H5('Most similar images')]
+        for i in range(top_n):
+            hit_result = results[i]
+            hit_content = [html.Img(src=hit_result['img-url']),
+                           html.P(f'{hit_result["item-label"]} - {hit_result["img-label"]}'),
+                           html.P(f'Similarity: {hit_result["similarity"]}')]
+            search_content.append(hit_content)
+            
+        search_content = html.Div(search_content)
+        return search_content
     
     @app.callback(Output('output-image-upload', 'children'),
                 Input('upload-image', 'contents'),
                 State('upload-image', 'filename'),
                 State('upload-image', 'last_modified'))
-    def update_output(contents, filename, last_modified):
+    def display_uploaded_image(contents, filename, last_modified):
         if contents is not None:
             children = parse_contents(contents, filename, last_modified)
             pil_image = pil_image_from_html_img_src(contents)
             vector = generate_vector_for_pil_image(pil_image=pil_image, image_mdoel=image_model, torchvision_transform=transform)
+            return children
+        
+    @app.callback(Output('search-results', 'children'),
+                Input('upload-image', 'contents'),)
+    def display_search_results(contents):
+        if contents is not None:
+            pil_image = pil_image_from_html_img_src(contents)
+            vector = generate_vector_for_pil_image(pil_image=pil_image, image_mdoel=image_model, torchvision_transform=transform)
+            children = 
             return children
     return app
 

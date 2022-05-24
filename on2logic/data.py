@@ -21,17 +21,9 @@ def load_iiif_manifest_from_item_name(item_name):
 
     return json_data
 
-def download_and_save_single_image(image_id: str,
-                                   save_folder:str = None,
+def download_and_save_image_from_url(image_url: str,
+                                   save_path:str = None,
                                    relax:bool = False,):
-    print(f'Image ID: {image_id}')
-    # IIIF
-    download_image = 'https://images.lib.cam.ac.uk/iiif/' + image_id + '/full/max/0/default.jpg'
-
-    print(f'URL: {download_image}')
-
-    file_name = image_id.replace('.jp2', '.jpg')
-    save_path = f'{save_folder}/{file_name}'
 
     if relax:
         # Backoff to prevent the IIIF server being overloaded
@@ -40,7 +32,7 @@ def download_and_save_single_image(image_id: str,
     # Exception Handling for invalid requests
     try:
         # Creating a request object to store the response
-        ImgRequest = requests.get(download_image)
+        ImgRequest = requests.get(image_url)
 
         # Verifying whether the specified URL exist or not
         if ImgRequest.status_code == requests.codes.ok:
@@ -56,7 +48,7 @@ def download_and_save_single_image(image_id: str,
             print(ImgRequest.status_code)
     except Exception as e:
         print(str(e))
-    return download_image
+    return 
 
 def default_folder_name_for_item(item_name):
     project_dir = Path(abspath(__file__)).parents[1]
@@ -65,10 +57,21 @@ def default_folder_name_for_item(item_name):
     
     return default_folder_name
 
-def loop_through_json_data_and_save_images(item_name:str ,
+
+def image_url_from_image_id(image_id: str):
+    print(f'Image ID: {image_id}')
+    # IIIF
+    image_url = 'https://images.lib.cam.ac.uk/iiif/' + image_id + '/full/max/0/default.jpg'
+
+    print(f'URL: {image_url}')
+    
+    return image_url
+
+def save_manifest_data(item_name:str ,
                                            json_data, 
                                            save_folder:str = None,
                                            relax:bool = False,
+                                           save_images:bool = True,
                                            save_metadata: bool = True):
     
     if save_folder is None:
@@ -89,11 +92,17 @@ def loop_through_json_data_and_save_images(item_name:str ,
 
                 image_id = iiif_image.rsplit('/', 1)[-1]
                 # print(image_id)
-                image_url = download_and_save_single_image(image_id, save_folder, relax)
+                
+                image_url = image_url_from_image_id(image_id)
+                if save_images:
+                    file_name = image_id.replace('.jp2', '.jpg')
+                    save_path = f'{save_folder}/{file_name}'
+                    download_and_save_image_from_url(image_id, save_path, relax)
                 
 
                 image_labels.append(canvas['label'])
                 image_urls.append(image_url)
+                
     if save_metadata:
         
         full_item_label = json_data['label']
@@ -111,14 +120,16 @@ def loop_through_json_data_and_save_images(item_name:str ,
         
 
 def download_images_from_item_name(item_name:str,
+                                   save_images:bool = True,
                                    save_metadata:bool = True):
 
     json_data = load_iiif_manifest_from_item_name(item_name)
 
     # TODO save json metadata as txt file - display in app
-    loop_through_json_data_and_save_images(item_name, 
-                                           json_data,
-                                           save_metadata=save_metadata)
+    save_manifest_data(item_name, 
+                        json_data,
+                        save_images=save_images,
+                        save_metadata=save_metadata)
     
     
 def item_name_dataloader(item_name):

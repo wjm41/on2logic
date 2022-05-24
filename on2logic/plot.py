@@ -32,6 +32,12 @@ def cosine_similarity(vector1, vector2):
     return 1 - spatial.distance.cosine(vector1, vector2)
 
 
+def perform_top_n_search():
+    rows_to_search['cosine'] = rows_to_search['vector'].apply(lambda x: cosine_similarity(x, vector_for_this_image))
+    top_n = rows_to_search[['manuscript', 'cosine']].sort_values(by='cosine', ascending=False).index.values[:n]
+    
+    return top_n
+
 def plot_top_n_similar_images_for_query(image_dataset_to_search, 
                                         image_dataframe_to_search: pd.DataFrame, 
                                         image_data_to_query: pd.DataFrame, 
