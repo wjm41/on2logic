@@ -30,12 +30,15 @@ def load_image_model(model_name:str ='resnet50') -> torch.nn.Module:
     image_model.eval() # this turns off dropout etc, important!
     return image_model
 
-def generate_vectors_from_preprocessed_folder(image_model, image_dataset):
+def generate_vectors_from_preprocessed_folder(image_model, image_dataset, device:str = None):
+    if device is None:
+        device = get_device()
+    
     image_dataloader = torch.utils.data.DataLoader(image_dataset, batch_size=1, shuffle=False)
     image_vectors = []
     image_labels = []
     for batch_of_images, batch_of_labels in image_dataloader:
-        batch_of_vectors = image_model(batch_of_images)
+        batch_of_vectors = image_model(batch_of_images.to(device))
         image_vectors.append(batch_of_vectors)
         image_labels.append(batch_of_labels)
         
@@ -43,7 +46,9 @@ def generate_vectors_from_preprocessed_folder(image_model, image_dataset):
     image_labels = torch.cat(image_labels).detach().numpy()
     return image_vectors, image_labels
 
-def generate_vector_for_pil_image(pil_image, image_mdoel, torchvision_transform):
-    transformed_image = torchvision_transform(pil_image).unsqueeze(0)
-    image_vector = image_mdoel(transformed_image).detach().numpy()
+def generate_vector_for_pil_image(pil_image, image_model, torchvision_transform, device:str = None):
+    if device is None:
+        device = get_device()
+    transformed_image = torchvision_transform(pil_image).unsqueeze(0).to(device)
+    image_vector = image_model(transformed_image).detach().numpy()
     return image_vector

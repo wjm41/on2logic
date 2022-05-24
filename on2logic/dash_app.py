@@ -176,7 +176,7 @@ def search_app(mode:str):
         if contents is not None:
             children = parse_contents(contents, filename, last_modified)
             pil_image = pil_image_from_html_img_src(contents)
-            vector = generate_vector_for_pil_image(pil_image=pil_image, image_mdoel=image_model, torchvision_transform=transform)
+            vector = generate_vector_for_pil_image(pil_image=pil_image, image_model=image_model, torchvision_transform=transform)
             return children
         
     @app.callback(Output('search-results', 'children'),
@@ -184,7 +184,7 @@ def search_app(mode:str):
     def display_search_results(contents):
         if contents is not None:
             pil_image = pil_image_from_html_img_src(contents)
-            vector = generate_vector_for_pil_image(pil_image=pil_image, image_mdoel=image_model, torchvision_transform=transform)
+            vector = generate_vector_for_pil_image(pil_image=pil_image, image_model=image_model, torchvision_transform=transform)
             children = 
             return children
     return app
