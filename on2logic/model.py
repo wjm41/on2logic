@@ -4,6 +4,8 @@ import pandas as  pd
 import numpy as np
 import torch
 from torch.cuda import is_available as cuda_is_available
+from torch.cuda import get_device_name as cuda_get_device_name
+
 import timm
 from scipy import spatial
 import seaborn as sns
