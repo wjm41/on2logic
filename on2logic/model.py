@@ -50,5 +50,5 @@ def generate_vector_for_pil_image(pil_image, image_model, torchvision_transform,
     if device is None:
         device = get_device()
     transformed_image = torchvision_transform(pil_image).unsqueeze(0).to(device)
-    image_vector = image_model(transformed_image).detach().numpy()
+    image_vector = image_model(transformed_image).cpu().detach().numpy()
     return image_vector
