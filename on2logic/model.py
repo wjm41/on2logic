@@ -1,13 +1,30 @@
+import logging
+
 import pandas as  pd
 import numpy as np
 import torch
+from torch.cuda import is_available as cuda_is_available
 import timm
 from scipy import spatial
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+def get_device() -> str:
+    """Detects CUDA availability and returns the appropriate torch device.
+    Returns:
+        device (str): device to-be used in torch
+    """
+    if cuda_is_available():
+        logging.info(f'using GPU: {cuda_get_device_name()}')
+        device = 'cuda'
+    else:
+        logging.info('No GPU found, using CPU')
+        device = 'cpu'
+    return device
+
 def load_image_model(model_name:str ='resnet50') -> torch.nn.Module:
-    image_model = timm.create_model(model_name, pretrained=True)
+    device = get_device()
+    image_model = timm.create_model(model_name, pretrained=True).to(device)
     image_model.eval() # this turns off dropout etc, important!
     return image_model
 
