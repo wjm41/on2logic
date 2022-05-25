@@ -11,15 +11,16 @@ from on2logic.data import item_name_dataloader, default_folder_name_for_item, im
 from on2logic.utils import return_default_transforms
 
 
-def process_item_name(item_name):
+def process_item_name(item_name, data_dir:str = 'data/images/cudl'):
     device = get_device()
     
     image_model = load_image_model()
     images_in_item = item_name_dataloader(item_name)
+    number_of_images_in_item = sum(1 for _ in images_in_item)
     transform = return_default_transforms()
     
     image_vectors_for_item = []
-    for image_id in tqdm(images_in_item):
+    for image_id in tqdm(images_in_item, total=number_of_images_in_item):
         image_url = image_url_from_image_id(image_id)
 
                 
@@ -32,7 +33,7 @@ def process_item_name(item_name):
             print(ImgRequest.status_code)
             raise Exception
     image_vectors_for_item = np.vstack(image_vectors_for_item)
-    np.save(f'{default_folder_name_for_item(item_name)}/image_vectors.npy', image_vectors_for_item)
+    np.save(f'{data_dir}/{item_name}/image_vectors.npy', image_vectors_for_item)
     return
 
 

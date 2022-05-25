@@ -50,10 +50,8 @@ def download_and_save_image_from_url(image_url: str,
         print(str(e))
     return 
 
-def default_folder_name_for_item(item_name):
-    project_dir = Path(abspath(__file__)).parents[1]
-
-    default_folder_name = f'{project_dir}/data/images/cudl/{item_name}'
+def default_folder_name_for_item(item_name, data_dir:str='data/images/cudl'):
+    default_folder_name = f'{data_dir}/{item_name}'
     
     return default_folder_name
 

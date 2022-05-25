@@ -94,7 +94,7 @@ This will download all the associated images of these five manuscripts onto your
 
 ### TO-DO
 
-TODO - download manifest .csv for case study files
-TODO - implement search via manifests
-TODO - implement app
-TODO - host example app on heroku
+[x] - download manifest .csv for case study files
+[ ] - implement search via manifests
+[ ] - implement app
+[ ] - host example app on heroku
