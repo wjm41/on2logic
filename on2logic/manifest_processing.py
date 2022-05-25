@@ -15,7 +15,7 @@ def process_item_name(item_name, data_dir:str = 'data/images/cudl'):
     device = get_device()
     
     image_model = load_image_model()
-    images_in_item = item_name_dataloader(item_name)
+    images_in_item = list(item_name_dataloader(item_name)) # convert generator item to memory in list
     number_of_images_in_item = sum(1 for _ in images_in_item)
     transform = return_default_transforms()
     
