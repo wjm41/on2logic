@@ -17,4 +17,5 @@ module load miniconda/3
 source activate cdh
 
 cd /home/wjm41/ml_physics/CDH
-python on2logic/case_study.py -path_to_case_study_items=data/case_study_list.txt
+pip install .
+python on2logic/case_study.py -data_dir=data

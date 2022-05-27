@@ -1,3 +1,4 @@
+import glob
 from pathlib import Path
 
 import numpy as np
@@ -37,3 +38,14 @@ def case_study_setup():
     
     manuscript_dataframe = generate_manuscript_dataframe(manuscript_vectors, manuscript_labels, manuscript_label_to_name, manuscript_page_numbers)
     return manuscript_dataset, manuscript_dataframe
+
+def load_case_study_dataframe(data_dir = '/home/wjm41/ml_physics/CDH/data/images/cudl'):
+    image_vectors = glob.glob(f'{data_dir}/*/*.npy')
+    image_metadata = glob.glob(f'{data_dir}/*/*.csv')
+    
+    df_library = pd.concat([pd.read_csv(metadata_csv) for metadata_csv in image_metadata])
+    library_vectors = np.vstack([np.load(vector_npy) for vector_npy in image_vectors])
+    
+    df_library['vector'] = [img_vector for img_vector in library_vectors]
+    
+    return df_library

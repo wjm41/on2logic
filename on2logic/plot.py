@@ -32,11 +32,11 @@ def cosine_similarity(vector1, vector2):
     return 1 - spatial.distance.cosine(vector1, vector2)
 
 
-def perform_top_n_search():
-    rows_to_search['cosine'] = rows_to_search['vector'].apply(lambda x: cosine_similarity(x, vector_for_this_image))
-    top_n = rows_to_search[['manuscript', 'cosine']].sort_values(by='cosine', ascending=False).index.values[:n]
+def perform_top_n_search(vector_for_this_image, search_dataframe, top_n):
+    search_dataframe['similarity'] = search_dataframe['vector'].apply(lambda x: cosine_similarity(x, vector_for_this_image))
+    top_n_rows = search_dataframe.nlargest(top_n, 'similarity')
     
-    return top_n
+    return top_n_rows
 
 def plot_top_n_similar_images_for_query(image_dataset_to_search, 
                                         image_dataframe_to_search: pd.DataFrame, 
@@ -56,28 +56,28 @@ def plot_top_n_similar_images_for_query(image_dataset_to_search,
 
     if search_type == 'same':
         rows_from_the_same_manuscript = search_dataframe_grouped_by_manuscript.get_group(manuscript_for_this_image).copy()
-        rows_to_search = rows_from_the_same_manuscript.query('manuscript.isin([@manuscript_for_this_image])')
+        search_dataframe = rows_from_the_same_manuscript.query('manuscript.isin([@manuscript_for_this_image])')
     elif search_type == 'different':
         rows_from_the_same_manuscript = search_dataframe_grouped_by_manuscript.get_group(manuscript_for_this_image).copy()
-        rows_to_search = rows_from_the_same_manuscript.query('~manuscript.isin([@manuscript_for_this_image])')
+        search_dataframe = rows_from_the_same_manuscript.query('~manuscript.isin([@manuscript_for_this_image])')
     elif search_type == 'specific':
-        rows_to_search = search_dataframe_grouped_by_manuscript.get_group(manuscript_name_to_search).copy()
+        search_dataframe = search_dataframe_grouped_by_manuscript.get_group(manuscript_name_to_search).copy()
     
     elif search_type == 'all':
-        rows_to_search = image_dataframe_to_search.copy()
+        search_dataframe = image_dataframe_to_search.copy()
     else:
         raise ValueError('search_type must be one of "same", "different", "all"')
 
-    rows_to_search['cosine'] = rows_to_search['vector'].apply(lambda x: cosine_similarity(x, vector_for_this_image))
-    top_n = rows_to_search[['manuscript', 'cosine']].sort_values(by='cosine', ascending=False).index.values[:n]
+    search_dataframe['cosine'] = search_dataframe['vector'].apply(lambda x: cosine_similarity(x, vector_for_this_image))
+    top_n = search_dataframe[['manuscript', 'cosine']].sort_values(by='cosine', ascending=False).index.values[:n]
     
     plot_image_from_index(image_dataset=image_dataset_to_search, image_index=query_index, 
                           title=f'Original Image, search_type = ({search_type})')
-    plot_image_row(image_dataset_to_search, top_n, rows_to_search)
+    plot_image_row(image_dataset_to_search, top_n, search_dataframe)
     # for similar_index in top_n:
     #     plot_image_from_index(image_dataset=image_dataset_to_search,
     #                           image_index=similar_index, 
-    #                           title=f'similarity = {rows_to_search.loc[similar_index, "cosine"]:.3f}, page_number = {rows_to_search.loc[similar_index, "page"]}')
+    #                           title=f'similarity = {search_dataframe.loc[similar_index, "cosine"]:.3f}, page_number = {search_dataframe.loc[similar_index, "page"]}')
         
     return
 
@@ -112,19 +112,19 @@ def similarity_histogram(image_dataset_to_search,
 
     if search_type == 'same':
         rows_from_the_same_manuscript = search_dataframe_grouped_by_manuscript.get_group(manuscript_for_this_image).copy()
-        rows_to_search = rows_from_the_same_manuscript.query('manuscript.isin([@manuscript_for_this_image])')
+        search_dataframe = rows_from_the_same_manuscript.query('manuscript.isin([@manuscript_for_this_image])')
     elif search_type == 'different':
         rows_from_the_same_manuscript = search_dataframe_grouped_by_manuscript.get_group(manuscript_for_this_image).copy()
-        rows_to_search = rows_from_the_same_manuscript.query('~manuscript.isin([@manuscript_for_this_image])')
+        search_dataframe = rows_from_the_same_manuscript.query('~manuscript.isin([@manuscript_for_this_image])')
     elif search_type == 'specific':
-        rows_to_search = search_dataframe_grouped_by_manuscript.get_group(manuscript_name_to_search).copy()
+        search_dataframe = search_dataframe_grouped_by_manuscript.get_group(manuscript_name_to_search).copy()
     
     elif search_type == 'all':
-        rows_to_search = image_dataframe_to_search.copy()
+        search_dataframe = image_dataframe_to_search.copy()
     else:
         raise ValueError('search_type must be one of "same", "different", "all"')
 
-    rows_to_search['cosine'] = rows_to_search['vector'].apply(lambda x: cosine_similarity(x, vector_for_this_image))
+    search_dataframe['cosine'] = search_dataframe['vector'].apply(lambda x: cosine_similarity(x, vector_for_this_image))
 
     plot_image_from_index(image_dataset=image_dataset_to_search, image_index=query_index, 
                           title=f'Original Image, search_type = ({search_type})')    
@@ -132,13 +132,13 @@ def similarity_histogram(image_dataset_to_search,
     fig = plt.figure(figsize=(20,10))
     # sns.set(rc={'figure.figsize':(14, 14)})
     ax = plt.gca()
-    sns.histplot(data=rows_to_search, 
+    sns.histplot(data=search_dataframe, 
                 x='cosine', 
                 hue='manuscript', 
                 multiple='dodge',
                 ax=ax,
                 )
-    sns.kdeplot(data=rows_to_search, 
+    sns.kdeplot(data=search_dataframe, 
                 x='cosine', 
                 hue='manuscript', 
                 multiple='layer',
