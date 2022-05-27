@@ -1,7 +1,8 @@
 # on2logic
+
 Deep similarity searching of archive manuscripts
 
-This repo contains code for calculating the visual similarity between images by using pre-trained computer vision ML models. We apply this to images downloaded from CUDL IIIF manifests and computationally infer connections between archive items. 
+This repo contains code for calculating the visual similarity between images by using pre-trained computer vision ML models. We apply this to images downloaded from CUDL IIIF manifests and computationally infer connections between archive items.
 
 ```mermaid
 flowchart TD
@@ -40,7 +41,7 @@ An early printed book that contains the first natural history encyclopaedia, dat
 
 A decorative manuscript of the *Gulistan* (Rose Garden) - a poem composed by the Persian poet Sa'di (1203-1292), dated c. 1582-1583.  This is in the Royal Asiatic Society Collection.   To view the full manuscript click [here](https://cudl.lib.cam.ac.uk/view/MS-RAS-00258/).
 
-### Selection Criteria 
+### Selection Criteria
 
 We selected these manuscripts because we were already aware of several images that were similar to one another across these various manuscripts.  For example, unsurprisingly, astronomical diagrams in both Islamic and Christian manuscripts and incunabula prove to have a marked visual similarity.
 
@@ -90,3 +91,10 @@ If you would like to access the full data set, there is a Python script availabl
 To run this script, you need to also download the file **item_list.txt**, which contains the IDs of each of the manuscripts in the data set.
 
 This will download all the associated images of these five manuscripts onto your computer.  This is a grand total of 3,627 images, taking up about 1.3 GB.  Please be aware that the download can take some time.
+
+### TO-DO
+
+[x] - download manifest .csv for case study files
+[ ] - implement search via manifests
+[ ] - implement app
+[ ] - host example app on heroku
